@@ -7,8 +7,9 @@ Create wiktionary-like inflection tables for omorfi paradigms and words.
 
 from argparse import ArgumentParser, FileType
 from random import choice
+from os import system
 from sys import stderr, stdout
-from time import perf_counter, process_time
+from time import perf_counter, process_time, sleep
 
 from omorfi import Omorfi
 
@@ -77,10 +78,9 @@ def test_loop(omorfi):
     words = ("maksaa", "ostaa", "tulla", "mennä")
     persons = {"minä": "SG1", "sinä": "SG2", "hän": "SG3", "me":"PL1", "te": "PL2", "he": "PL3"}
     tenses = {"present": "PRESENT", "imperfect": "PAST", "perfect": "PERFECT", "plusquamperfect": "PLUSQUAMPERFECT"}
-    negatives = ("negated", "")
+    negatives = ("negative", "")
     while True:
         word, person, tense, negative = choice(words), choice(list(persons)), choice(list(tenses)), choice(negatives)
-        print (word, person, tense, negative)
         if tense in ("perfect", "plusquamperfect"):
             if negative:
                 answer = generate_negated_perfect_verb(omorfi, word, persons[person], tenses[tense])
@@ -91,13 +91,15 @@ def test_loop(omorfi):
                 answer = generate_negated_verb(omorfi, word, persons[person], tenses[tense])
             else:
                 answer = generate_simple_verb(omorfi, word, persons[person], tenses[tense])
-        print("Tense {0} || {1}:\n {2} [{3}]".format(tense, negative, person, word.upper()))
+        print("{0} {1}:\n {2} [{3}]".format(negative, tense, person, word.upper()))
         guess = input("What's the answer? ").strip()
         if guess == answer:
              print("Yes!")
         else:
              print("No - it should have been " + answer)
         print("\n----------------------------------------")
+        sleep(2)
+        system("clear")
         
 
 def main():
